@@ -8,9 +8,23 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # ----------------------------
-# CONFIG
+# PAGE CONFIG
 # ----------------------------
 st.set_page_config(page_title="ML Assignment 2", layout="wide")
+
+# ----------------------------
+# STUDENT INFORMATION (REQUIRED - DO NOT DELETE)
+# ----------------------------
+st.markdown("""
+### 🧑‍🎓 STUDENT INFORMATION (REQUIRED - DO NOT DELETE)
+
+**BITS ID:** 2025AA05152  
+**Name:** K DEVI  
+**Email:** 2025aa05152@wilp.bits-pilani.ac.in  
+**Date:** 07-02-2026  
+
+---
+""")
 
 # ----------------------------
 # CONFUSION MATRIX
@@ -54,25 +68,14 @@ model_map = {
 # ----------------------------
 st.sidebar.header("Controls")
 
-csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
+st.sidebar.markdown("""
+### 📥 Download Test Dataset
 
-# Download Button
-st.sidebar.markdown(f"""
-<a href="{csv_url}" target="_blank">
-    <button style="
-        width:100%;
-        background-color:#4CAF50;
-        color:white;
-        padding:10px;
-        border:none;
-        border-radius:6px;
-        font-size:15px;
-        cursor:pointer;
-    ">
-    ⬇ Download Test Dataset
-    </button>
-</a>
-""", unsafe_allow_html=True)
+Dataset is available in GitHub repository.  
+*(Download link provided in assignment submission)*
+""")
+
+csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
 
 # Model Selection
 model_name = st.sidebar.selectbox("🤖 Select Model", list(model_map.keys()))
@@ -129,4 +132,4 @@ if evaluate_btn:
     st.text(classification_report(y, y_pred))
 
 else:
-    st.info("⬅ Click **Evaluate Model** to load dataset and run evaluation.")
+    st.info("⬅ Select model and click **Evaluate Model** to run analysis")
