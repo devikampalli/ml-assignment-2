@@ -27,17 +27,19 @@ st.set_page_config(page_title="ML Assignment 2", layout="wide")
 # ----------------------------
 # STUDENT INFORMATION
 # ----------------------------
-st.markdown("""
-### 🧑‍🎓 STUDENT INFORMATION
+st.markdown("### 🧑‍🎓 STUDENT INFORMATION")
 
-**BITS ID:** 2025AA05152  
-**Name:** K DEVI  
-**Email:** 2025aa05152@wilp.bits-pilani.ac.in  
-**Date:** 15-02-2026  
+col1, col2 = st.columns(2)
 
----
-""")
+with col1:
+    st.markdown("**BITS ID:** 2025AA05152")
+    st.markdown("**Name:** K DEVI")
 
+with col2:
+    st.markdown("**Email:** 2025aa05152@wilp.bits-pilani.ac.in")
+    st.markdown("**Date:** 15-02-2026")
+
+st.markdown("---")
 # ----------------------------
 # CONFUSION MATRIX FUNCTION
 # ----------------------------
