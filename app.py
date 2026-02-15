@@ -109,11 +109,16 @@ if evaluate_btn:
 
     X, y = preprocess_data(df)
 
+    # 🔥 CREATE + TRAIN MODEL LIVE
+    model = get_model(model_name)
+    model.fit(X, y)
 
+    # 🔮 PREDICTION
     y_pred = model.predict(X)
-    y_prob = model.predict_proba(X)[:,1]
+    y_prob = model.predict_proba(X)[:, 1]
 
     metrics = evaluate(y, y_pred, y_prob)
+
 
     # ----------------------------
     # METRICS
