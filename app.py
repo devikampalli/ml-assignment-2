@@ -5,24 +5,19 @@ from model.preprocess import preprocess_data
 from model.evaluate import evaluate
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import classification_report
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 
-def get_model(name):
-    if name == "Logistic Regression":
-        return LogisticRegression(max_iter=1000)
-    elif name == "Decision Tree":
-        return DecisionTreeClassifier()
-    elif name == "KNN":
-        return KNeighborsClassifier()
-    elif name == "Naive Bayes":
-        return GaussianNB()
-    elif name == "Random Forest":
-        return RandomForestClassifier(n_estimators=200, random_state=42)
+# Safe import for XGBoost (prevents Streamlit crash)
+try:
+    from xgboost import XGBClassifier
+    xgb_available = True
+except:
+    xgb_available = False
 
 # ----------------------------
 # PAGE CONFIG
@@ -30,30 +25,28 @@ def get_model(name):
 st.set_page_config(page_title="ML Assignment 2", layout="wide")
 
 # ----------------------------
-# STUDENT INFORMATION (REQUIRED - DO NOT DELETE)
+# STUDENT INFORMATION
 # ----------------------------
 st.markdown("""
 ### 🧑‍🎓 STUDENT INFORMATION
-            
-**BITS ID:** 2025AA05152                        **Name:** K DEVI    **Date:** 15-02-2026  
+
+**BITS ID:** 2025AA05152  
+**Name:** K DEVI  
 **Email:** 2025aa05152@wilp.bits-pilani.ac.in  
+**Date:** 15-02-2026  
+
 ---
 """)
 
 # ----------------------------
-# CONFUSION MATRIX
+# CONFUSION MATRIX FUNCTION
 # ----------------------------
 def plot_confusion_matrix(cm):
     fig, ax = plt.subplots(figsize=(5,4))
     sns.heatmap(
-        cm,
-        annot=True,
-        fmt="d",
-        cmap="Blues",
-        linewidths=0.5,
-        linecolor="black",
-        cbar=False,
-        ax=ax
+        cm, annot=True, fmt="d", cmap="Blues",
+        linewidths=0.5, linecolor="black",
+        cbar=False, ax=ax
     )
     ax.set_xlabel("Predicted Label")
     ax.set_ylabel("True Label")
@@ -61,21 +54,45 @@ def plot_confusion_matrix(cm):
     return fig
 
 # ----------------------------
+# MODEL FACTORY
+# ----------------------------
+def get_model(name):
+    if name == "Logistic Regression":
+        return LogisticRegression(max_iter=1000)
+
+    elif name == "Decision Tree":
+        return DecisionTreeClassifier()
+
+    elif name == "KNN":
+        return KNeighborsClassifier()
+
+    elif name == "Naive Bayes":
+        return GaussianNB()
+
+    elif name == "Random Forest":
+        return RandomForestClassifier(n_estimators=200, random_state=42)
+
+    elif name == "XGBoost":
+        if xgb_available:
+            return XGBClassifier(
+                n_estimators=200,
+                learning_rate=0.1,
+                max_depth=6,
+                subsample=0.8,
+                colsample_bytree=0.8,
+                eval_metric='logloss',
+                random_state=42
+            )
+        else:
+            return None
+
+    else:
+        return None
+
+# ----------------------------
 # TITLE
 # ----------------------------
 st.title("📊 ML Assignment 2 – Classification Models Dashboard")
-
-# ----------------------------
-# MODEL MAP
-# ----------------------------
-model_map = {
-    "Logistic Regression": "model/trained_models/logistic.pkl",
-    "Decision Tree": "model/trained_models/decision_tree.pkl",
-    "KNN": "model/trained_models/knn.pkl",
-    "Naive Bayes": "model/trained_models/naive_bayes.pkl",
-    "Random Forest": "model/trained_models/random_forest.pkl",
-    "XGBoost": "model/trained_models/xgboost.pkl"
-}
 
 # ----------------------------
 # SIDEBAR CONTROLS
@@ -83,22 +100,22 @@ model_map = {
 st.sidebar.header("Controls")
 
 st.sidebar.markdown("""
-### 📥 Download Test Dataset
-
-Dataset is available in GitHub repository.  
-*(It will be loaded when click on Evaluate Model)*
+### 📥 Dataset Source
+Dataset is loaded directly from GitHub  
+*(Evaluation runs only after clicking Evaluate Model)*
 """)
 
 csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
 
-# Model Selection
-model_name = st.sidebar.selectbox("🤖 Select Model", list(model_map.keys()))
+model_name = st.sidebar.selectbox(
+    "🤖 Select Model",
+    ["Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Random Forest", "XGBoost"]
+)
 
-# Evaluate Button
 evaluate_btn = st.sidebar.button("▶️ Evaluate Model")
 
 # ----------------------------
-# MAIN EXECUTION (ONLY ON CLICK)
+# MAIN EXECUTION
 # ----------------------------
 if evaluate_btn:
 
@@ -109,11 +126,15 @@ if evaluate_btn:
 
     X, y = preprocess_data(df)
 
-    # 🔥 CREATE + TRAIN MODEL LIVE
     model = get_model(model_name)
-    model.fit(X, y)
 
-    # 🔮 PREDICTION
+    if model is None:
+        st.error("❌ XGBoost is not supported on this server. Please select another model.")
+        st.stop()
+
+    with st.spinner("Training model... Please wait ⏳"):
+        model.fit(X, y)
+
     y_pred = model.predict(X)
     y_prob = model.predict_proba(X)[:, 1]
 
@@ -137,28 +158,22 @@ if evaluate_btn:
     # CONFUSION MATRIX
     # ----------------------------
     st.subheader("🧩 Confusion Matrix")
-
     cm = confusion_matrix(y, y_pred)
-    fig = plot_confusion_matrix(cm)
-    st.pyplot(fig)
+    st.pyplot(plot_confusion_matrix(cm))
 
     # ----------------------------
     # CLASSIFICATION REPORT
     # ----------------------------
     st.subheader("📄 Classification Report")
 
-# Convert classification report to DataFrame
     report_dict = classification_report(y, y_pred, output_dict=True)
-    report_df = pd.DataFrame(report_dict).transpose()
-
-# Round values
-    report_df = report_df.round(3)
+    report_df = pd.DataFrame(report_dict).transpose().round(3)
 
     st.dataframe(
-    report_df.style
+        report_df.style
         .background_gradient(cmap="Blues")
         .format(precision=3)
     )
 
 else:
-    st.info("⬅ Select model and click **Evaluate Model** to run analysis")
+    st.info("⬅ Select a model and click **Evaluate Model** to start analysis")
