@@ -64,10 +64,10 @@ Each model was:
 
 | Model | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |----------|------------|------|-------------|----------|------|------|
-| Logistic Regression | 0.847 | 0.901 | 0.78 | 0.72 | 0.75 | 0.64 |
-| Decision Tree | 0.820 | 0.861 | 0.74 | 0.70 | 0.72 | 0.59 |
-| KNN | 0.832 | 0.872 | 0.75 | 0.71 | 0.73 | 0.61 |
-| Naive Bayes | 0.804 | 0.850 | 0.72 | 0.68 | 0.70 | 0.56 |
+| Logistic Regression | 0.82 | 0.851 | 0.725 | 0.439 | 0.547 | 0.464 |
+| Decision Tree | 0.917 | 0.886 | 0.84 | 0.823 | 0.832 | 0.777 |
+| KNN | 0.864 | 0.922 | 0.756 | 0.666 | 0.708 | 0.621 |
+| Naive Bayes | 0.797 | 0.854 | 0.692 | 0.0327 | 0.444 | 0.374 |
 | Random Forest | 0.865 | 0.915 | 0.81 | 0.76 | 0.78 | 0.68 |
 | XGBoost | **0.881** | **0.932** | **0.84** | **0.79** | **0.81** | **0.72** |
 
@@ -111,4 +111,5 @@ https://ml-assignment-2-bidh6seggdwwphvwkowwhm.streamlit.app/
 ```bash
 git clone https://github.com/devikampalli/ml-assignment-2.git
 cd ml-assignment-2
+
 
