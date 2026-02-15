@@ -38,8 +38,29 @@ model_map = {
     "XGBoost": "model/trained_models/xgboost.pkl"
 }
 
+st.markdown("### 📥 Download Sample Test Dataset")
+
+csv_url = "https://raw.githubusercontent.com/devi-ml/ml-assignment-2/main/adult.csv"
+
+st.markdown(f"""
+<a href="{csv_url}" download>
+    <button style="
+        background-color:#4CAF50;
+        color:white;
+        padding:10px 16px;
+        border:none;
+        border-radius:6px;
+        font-size:15px;
+        cursor:pointer;
+    ">
+    ⬇ Download Test CSV
+    </button>
+</a>
+""", unsafe_allow_html=True)
+
 st.sidebar.header("Upload Test Dataset")
 uploaded_file = st.sidebar.file_uploader("Upload CSV (with target)", type=["csv"])
+
 
 model_name = st.sidebar.selectbox("Select Model", list(model_map.keys()))
 
