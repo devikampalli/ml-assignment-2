@@ -1,12 +1,28 @@
 import streamlit as st
 import pandas as pd
-import joblib
 from sklearn.metrics import confusion_matrix, classification_report
 from model.preprocess import preprocess_data
 from model.evaluate import evaluate
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import classification_report
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+
+def get_model(name):
+    if name == "Logistic Regression":
+        return LogisticRegression(max_iter=1000)
+    elif name == "Decision Tree":
+        return DecisionTreeClassifier()
+    elif name == "KNN":
+        return KNeighborsClassifier()
+    elif name == "Naive Bayes":
+        return GaussianNB()
+    elif name == "Random Forest":
+        return RandomForestClassifier(n_estimators=200, random_state=42)
 
 # ----------------------------
 # PAGE CONFIG
@@ -93,7 +109,6 @@ if evaluate_btn:
 
     X, y = preprocess_data(df)
 
-    model = joblib.load(model_map[model_name])
 
     y_pred = model.predict(X)
     y_prob = model.predict_proba(X)[:,1]
