@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # ----------------------------
-# CONFIG
+# PAGE CONFIG
 # ----------------------------
 st.set_page_config(page_title="ML Assignment 2", layout="wide")
 
@@ -50,78 +50,29 @@ model_map = {
 }
 
 # ----------------------------
-# DOWNLOAD + LOAD DATASET FROM GITHUB
+# SIDEBAR UI (REPLACED UPLOAD)
 # ----------------------------
-st.markdown("### 📥 Download Test Dataset")
+st.sidebar.header("Dataset")
 
 csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
 
-st.markdown(f"""
+st.sidebar.markdown(f"""
 <a href="{csv_url}" target="_blank">
     <button style="
+        width:100%;
         background-color:#4CAF50;
         color:white;
-        padding:10px 16px;
+        padding:10px;
         border:none;
         border-radius:6px;
         font-size:15px;
         cursor:pointer;
     ">
-    ⬇ Download CSV from GitHub
+    ⬇ Download Test Dataset
     </button>
 </a>
 """, unsafe_allow_html=True)
 
 # ----------------------------
-# LOAD DATA DIRECTLY
-# ----------------------------
-st.markdown("### 📂 Dataset Loaded from GitHub")
-
-df = pd.read_csv(csv_url)
-st.dataframe(df.head())
-
-# ----------------------------
 # MODEL SELECTION
-# ----------------------------
-model_name = st.sidebar.selectbox("Select Model", list(model_map.keys()))
-
-# ----------------------------
-# PROCESS + PREDICT
-# ----------------------------
-X, y = preprocess_data(df)
-
-model = joblib.load(model_map[model_name])
-
-y_pred = model.predict(X)
-y_prob = model.predict_proba(X)[:, 1]
-
-metrics = evaluate(y, y_pred, y_prob)
-
-# ----------------------------
-# METRICS DISPLAY
-# ----------------------------
-st.subheader("📈 Performance Metrics")
-
-col1, col2, col3 = st.columns(3)
-col1.metric("Accuracy", round(metrics["Accuracy"],3))
-col2.metric("AUC", round(metrics["AUC"],3))
-col3.metric("Precision", round(metrics["Precision"],3))
-
-col1.metric("Recall", round(metrics["Recall"],3))
-col2.metric("F1 Score", round(metrics["F1"],3))
-col3.metric("MCC", round(metrics["MCC"],3))
-
-# ----------------------------
-# CONFUSION MATRIX
-# ----------------------------
-st.subheader("🧩 Confusion Matrix")
-
-cm = confusion_matrix(y, y_pred)
-fig = plot_confusion_matrix(cm)
-st.pyplot(fig)
-
-# ----------------------------
-# CLASSIFICATION REPORT
-# ----------------------------
-st.subheader("📄 Classification Report")
-st.text(classification_report(y, y_pred))
+# ------------------------
