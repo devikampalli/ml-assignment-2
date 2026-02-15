@@ -4,6 +4,26 @@ import joblib
 from sklearn.metrics import confusion_matrix, classification_report
 from model.preprocess import preprocess_data
 from model.evaluate import evaluate
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 👇 FUNCTION MUST COME BEFORE USE
+def plot_confusion_matrix(cm):
+    fig, ax = plt.subplots(figsize=(5,4))
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        linewidths=0.5,
+        linecolor="black",
+        cbar=False,
+        ax=ax
+    )
+    ax.set_xlabel("Predicted Label", fontsize=12)
+    ax.set_ylabel("True Label", fontsize=12)
+    ax.set_title("Confusion Matrix", fontsize=14, fontweight='bold')
+    return fig
 
 st.set_page_config(page_title="ML Assignment 2", layout="wide")
 
@@ -49,7 +69,10 @@ if uploaded_file:
     col3.metric("MCC", round(metrics["MCC"],3))
 
     st.subheader("Confusion Matrix")
-    st.write(confusion_matrix(y, y_pred))
+    cm = confusion_matrix(y, y_pred)
+    fig = plot_confusion_matrix(cm)
+    st.pyplot(fig)
 
     st.subheader("Classification Report")
     st.text(classification_report(y, y_pred))
+
