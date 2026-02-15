@@ -40,7 +40,7 @@ model_map = {
 
 st.markdown("### 📥 Download Sample Test Dataset")
 
-csv_url = "https://github.com/devikampalli/ml-assignment-2/blob/main/adult.csv"
+csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
 
 st.markdown(f"""
 <a href="{csv_url}" download>
