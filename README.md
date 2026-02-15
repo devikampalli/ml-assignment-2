@@ -69,7 +69,7 @@ Each model was:
 | KNN | 0.875 | 0.94 | 0.78 | 0.69 | 0.732 | 0.653 |
 | Naive Bayes | 0.797 | 0.853 | 0.686 | 0.334 | 0.449 | 0.376 |
 | Random Forest | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
-| XGBoost | **0.881** | **0.932** | **0.84** | **0.79** | **0.81** | **0.72** |
+| XGBoost | **0.889** | **0.949** | **0.825** | **0.704** | **0.76** | **0.692** |
 
 > **Note:** XGBoost provided the best overall performance across all metrics.
 
