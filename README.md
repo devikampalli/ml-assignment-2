@@ -98,6 +98,11 @@ Each model was:
 - 📄 Classification report in structured tabular format  
 
 ---
+## 📊 Streamlit Dashboard Link
+
+https://ml-assignment-2-bidh6seggdwwphvwkowwhm.streamlit.app/ 
+
+---
 
 ## ⚙ Installation Instructions
 
@@ -106,5 +111,4 @@ Each model was:
 ```bash
 git clone https://github.com/devikampalli/ml-assignment-2.git
 cd ml-assignment-2
-**### Step 2 Streamlit app link **
-https://ml-assignment-2-bidh6seggdwwphvwkowwhm.streamlit.app/
+
