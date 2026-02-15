@@ -7,7 +7,14 @@ from model.evaluate import evaluate
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# 👇 FUNCTION MUST COME BEFORE USE
+# ----------------------------
+# CONFIG
+# ----------------------------
+st.set_page_config(page_title="ML Assignment 2", layout="wide")
+
+# ----------------------------
+# CONFUSION MATRIX PLOT
+# ----------------------------
 def plot_confusion_matrix(cm):
     fig, ax = plt.subplots(figsize=(5,4))
     sns.heatmap(
@@ -25,10 +32,14 @@ def plot_confusion_matrix(cm):
     ax.set_title("Confusion Matrix", fontsize=14, fontweight='bold')
     return fig
 
-st.set_page_config(page_title="ML Assignment 2", layout="wide")
+# ----------------------------
+# TITLE
+# ----------------------------
+st.title("📊 ML Assignment 2 – Classification Models Dashboard")
 
-st.title("ML Assignment 2 – Classification Models Dashboard")
-
+# ----------------------------
+# MODEL MAP
+# ----------------------------
 model_map = {
     "Logistic Regression": "model/trained_models/logistic.pkl",
     "Decision Tree": "model/trained_models/decision_tree.pkl",
@@ -38,12 +49,15 @@ model_map = {
     "XGBoost": "model/trained_models/xgboost.pkl"
 }
 
-st.markdown("### 📥 Download Sample Test Dataset")
+# ----------------------------
+# DOWNLOAD + LOAD DATASET FROM GITHUB
+# ----------------------------
+st.markdown("### 📥 Download Test Dataset")
 
 csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
 
 st.markdown(f"""
-<a href="{csv_url}" download>
+<a href="{csv_url}" target="_blank">
     <button style="
         background-color:#4CAF50;
         color:white;
@@ -53,47 +67,61 @@ st.markdown(f"""
         font-size:15px;
         cursor:pointer;
     ">
-    ⬇ Download Test CSV
+    ⬇ Download CSV from GitHub
     </button>
 </a>
 """, unsafe_allow_html=True)
 
-st.sidebar.header("Upload Test Dataset")
-uploaded_file = st.sidebar.file_uploader("Upload CSV (with target)", type=["csv"])
+# ----------------------------
+# LOAD DATA DIRECTLY
+# ----------------------------
+st.markdown("### 📂 Dataset Loaded from GitHub")
 
+df = pd.read_csv(csv_url)
+st.dataframe(df.head())
 
+# ----------------------------
+# MODEL SELECTION
+# ----------------------------
 model_name = st.sidebar.selectbox("Select Model", list(model_map.keys()))
 
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.write("### Uploaded Data Preview")
-    st.dataframe(df.head())
+# ----------------------------
+# PROCESS + PREDICT
+# ----------------------------
+X, y = preprocess_data(df)
 
-    X, y = preprocess_data(df)
+model = joblib.load(model_map[model_name])
 
-    model = joblib.load(model_map[model_name])
+y_pred = model.predict(X)
+y_prob = model.predict_proba(X)[:, 1]
 
-    y_pred = model.predict(X)
-    y_prob = model.predict_proba(X)[:,1]
+metrics = evaluate(y, y_pred, y_prob)
 
-    metrics = evaluate(y, y_pred, y_prob)
+# ----------------------------
+# METRICS DISPLAY
+# ----------------------------
+st.subheader("📈 Performance Metrics")
 
-    st.subheader("Performance Metrics")
+col1, col2, col3 = st.columns(3)
+col1.metric("Accuracy", round(metrics["Accuracy"],3))
+col2.metric("AUC", round(metrics["AUC"],3))
+col3.metric("Precision", round(metrics["Precision"],3))
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Accuracy", round(metrics["Accuracy"],3))
-    col2.metric("AUC", round(metrics["AUC"],3))
-    col3.metric("Precision", round(metrics["Precision"],3))
+col1.metric("Recall", round(metrics["Recall"],3))
+col2.metric("F1 Score", round(metrics["F1"],3))
+col3.metric("MCC", round(metrics["MCC"],3))
 
-    col1.metric("Recall", round(metrics["Recall"],3))
-    col2.metric("F1 Score", round(metrics["F1"],3))
-    col3.metric("MCC", round(metrics["MCC"],3))
+# ----------------------------
+# CONFUSION MATRIX
+# ----------------------------
+st.subheader("🧩 Confusion Matrix")
 
-    st.subheader("Confusion Matrix")
-    cm = confusion_matrix(y, y_pred)
-    fig = plot_confusion_matrix(cm)
-    st.pyplot(fig)
+cm = confusion_matrix(y, y_pred)
+fig = plot_confusion_matrix(cm)
+st.pyplot(fig)
 
-    st.subheader("Classification Report")
-    st.text(classification_report(y, y_pred))
-
+# ----------------------------
+# CLASSIFICATION REPORT
+# ----------------------------
+st.subheader("📄 Classification Report")
+st.text(classification_report(y, y_pred))
