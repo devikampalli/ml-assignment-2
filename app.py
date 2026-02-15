@@ -6,6 +6,7 @@ from model.preprocess import preprocess_data
 from model.evaluate import evaluate
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import classification_report
 
 # ----------------------------
 # PAGE CONFIG
@@ -129,7 +130,19 @@ if evaluate_btn:
     # CLASSIFICATION REPORT
     # ----------------------------
     st.subheader("📄 Classification Report")
-    st.text(classification_report(y, y_pred))
+
+# Convert classification report to DataFrame
+    report_dict = classification_report(y, y_pred, output_dict=True)
+    report_df = pd.DataFrame(report_dict).transpose()
+
+# Round values
+    report_df = report_df.round(3)
+
+    st.dataframe(
+    report_df.style
+        .background_gradient(cmap="Blues")
+        .format(precision=3)
+    )
 
 else:
     st.info("⬅ Select model and click **Evaluate Model** to run analysis")
