@@ -119,7 +119,6 @@ if evaluate_btn:
 
     metrics = evaluate(y, y_pred, y_prob)
 
-
     # ----------------------------
     # METRICS
     # ----------------------------
