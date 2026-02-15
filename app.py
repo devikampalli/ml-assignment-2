@@ -55,55 +55,56 @@ model_map = {
 # ----------------------------
 st.sidebar.header("⚙️ Controls")
 
-model_name = st.sidebar.selectbox("Select Model", list(model_map.keys()))
-uploaded_file = st.sidebar.file_uploader("Upload Test Dataset", type=["csv"])
+st.sidebar.markdown("""
+### 📥 Dataset Source
+Dataset is automatically loaded from GitHub  
+*(Evaluation runs only after clicking Evaluate Model)*
+""")
+
+csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
+
+model_name = st.sidebar.selectbox("🤖 Select Model", list(model_map.keys()))
 run = st.sidebar.button("▶ Evaluate Model")
 
 # ----------------------------
 # CONFUSION MATRIX PLOT
 # ----------------------------
 def plot_confusion_matrix(cm):
-    fig, ax = plt.subplots(figsize=(4, 3))
+    fig, ax = plt.subplots(figsize=(5, 4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False, ax=ax)
     ax.set_xlabel("Predicted")
     ax.set_ylabel("Actual")
+    ax.set_title("Confusion Matrix")
     return fig
 
 # ----------------------------
-# SIDEBAR CONTROLS
-# ----------------------------
-st.sidebar.header("Controls")
-
-st.sidebar.markdown("""
-### 📥 Dataset Source
-Dataset is loaded directly from GitHub  
-*(Evaluation runs only after clicking Evaluate Model)*
-""")
-
-csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
-
-model_name = st.sidebar.selectbox(
-    "🤖 Select Model",
-    ["Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Random Forest", "XGBoost"]
-)
-# ----------------------------
 # MAIN EXECUTION
 # ----------------------------
-if run and uploaded_file:
+if run:
+
+    st.subheader("📂 Dataset Loaded from GitHub")
 
     df = pd.read_csv(csv_url)
-
     st.dataframe(df.head())
 
     X, y = preprocess_data(df)
 
-    model = joblib.load(MODEL_DIR + model_map[model_name])
+    model_path = MODEL_DIR + model_map[model_name]
+
+    try:
+        model = joblib.load(model_path)
+    except Exception as e:
+        st.error(f"❌ Could not load model file: {model_path}")
+        st.stop()
 
     y_pred = model.predict(X)
-    y_prob = model.predict_proba(X)[:,1]
+    y_prob = model.predict_proba(X)[:, 1]
 
     metrics = evaluate(y, y_pred, y_prob)
 
+    # ----------------------------
+    # METRICS
+    # ----------------------------
     st.subheader("📈 Performance Metrics")
 
     col1, col2, col3 = st.columns(3)
@@ -112,16 +113,27 @@ if run and uploaded_file:
     col3.metric("Precision", round(metrics["Precision"], 3))
 
     col1.metric("Recall", round(metrics["Recall"], 3))
-    col2.metric("F1", round(metrics["F1"], 3))
+    col2.metric("F1 Score", round(metrics["F1"], 3))
     col3.metric("MCC", round(metrics["MCC"], 3))
 
+    # ----------------------------
+    # CONFUSION MATRIX
+    # ----------------------------
     st.subheader("🧩 Confusion Matrix")
+
     cm = confusion_matrix(y, y_pred)
     st.pyplot(plot_confusion_matrix(cm))
 
+    # ----------------------------
+    # CLASSIFICATION REPORT
+    # ----------------------------
     st.subheader("📄 Classification Report")
-    report_df = pd.DataFrame(classification_report(y, y_pred, output_dict=True)).transpose().round(3)
+
+    report_df = pd.DataFrame(
+        classification_report(y, y_pred, output_dict=True)
+    ).transpose().round(3)
+
     st.dataframe(report_df.style.background_gradient(cmap="Blues"))
 
 else:
-    st.info("⬅ Upload test data and click **Evaluate Model**")
+    st.info("⬅ Select a model and click **Evaluate Model**")
