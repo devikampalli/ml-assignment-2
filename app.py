@@ -16,12 +16,12 @@ st.set_page_config(page_title="ML Assignment 2", layout="wide")
 # STUDENT INFORMATION (REQUIRED - DO NOT DELETE)
 # ----------------------------
 st.markdown("""
-### 🧑‍🎓 STUDENT INFORMATION (REQUIRED - DO NOT DELETE)
+### 🧑‍🎓 STUDENT INFORMATION
 
 **BITS ID:** 2025AA05152  
 **Name:** K DEVI  
 **Email:** 2025aa05152@wilp.bits-pilani.ac.in  
-**Date:** 07-02-2026  
+**Date:** 15-02-2026  
 
 ---
 """)
@@ -72,7 +72,7 @@ st.sidebar.markdown("""
 ### 📥 Download Test Dataset
 
 Dataset is available in GitHub repository.  
-*(Download link provided in assignment submission)*
+*(It will be loaded when click on Evaluate Model)*
 """)
 
 csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
