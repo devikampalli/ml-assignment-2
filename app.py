@@ -70,12 +70,29 @@ def plot_confusion_matrix(cm):
     return fig
 
 # ----------------------------
+# SIDEBAR CONTROLS
+# ----------------------------
+st.sidebar.header("Controls")
+
+st.sidebar.markdown("""
+### 📥 Dataset Source
+Dataset is loaded directly from GitHub  
+*(Evaluation runs only after clicking Evaluate Model)*
+""")
+
+csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
+
+model_name = st.sidebar.selectbox(
+    "🤖 Select Model",
+    ["Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Random Forest", "XGBoost"]
+)
+# ----------------------------
 # MAIN EXECUTION
 # ----------------------------
 if run and uploaded_file:
 
-    df = pd.read_csv(uploaded_file)
-    st.write("### 📂 Uploaded Test Dataset")
+    df = pd.read_csv(csv_url)
+
     st.dataframe(df.head())
 
     X, y = preprocess_data(df)
