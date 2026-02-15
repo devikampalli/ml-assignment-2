@@ -54,9 +54,9 @@ model_map = {
 # ----------------------------
 st.sidebar.header("Controls")
 
-# Download button
 csv_url = "https://raw.githubusercontent.com/devikampalli/ml-assignment-2/main/adult.csv"
 
+# Download Button
 st.sidebar.markdown(f"""
 <a href="{csv_url}" target="_blank">
     <button style="
@@ -74,27 +74,20 @@ st.sidebar.markdown(f"""
 </a>
 """, unsafe_allow_html=True)
 
-# Upload option
-uploaded_file = st.sidebar.file_uploader("📤 Upload CSV (with target)", type=["csv"])
-
-# Model selection
+# Model Selection
 model_name = st.sidebar.selectbox("🤖 Select Model", list(model_map.keys()))
 
-# Evaluate button
+# Evaluate Button
 evaluate_btn = st.sidebar.button("▶️ Evaluate Model")
 
 # ----------------------------
-# MAIN EXECUTION (ONLY ON BUTTON CLICK)
+# MAIN EXECUTION (ONLY ON CLICK)
 # ----------------------------
 if evaluate_btn:
 
-    if uploaded_file is None:
-        st.warning("⚠ Please upload a CSV dataset before evaluation.")
-        st.stop()
+    st.markdown("### 📂 Dataset Loaded from GitHub")
 
-    df = pd.read_csv(uploaded_file)
-
-    st.subheader("📂 Dataset Preview")
+    df = pd.read_csv(csv_url)
     st.dataframe(df.head())
 
     X, y = preprocess_data(df)
@@ -136,4 +129,4 @@ if evaluate_btn:
     st.text(classification_report(y, y_pred))
 
 else:
-    st.info("⬅ Please upload dataset, select model, and click **Evaluate Model**")
+    st.info("⬅ Click **Evaluate Model** to load dataset and run evaluation.")
